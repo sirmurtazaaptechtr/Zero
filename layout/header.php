@@ -1,4 +1,5 @@
-<?php 
+<?php
+    ob_start();
     require('connections/connection.php');
     include('libraries/functions.php');
 ?>

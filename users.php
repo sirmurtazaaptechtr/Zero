@@ -60,7 +60,7 @@
                 {?>
                 <tr>
                     <th scope="row"><?php echo $srno;?> </th>
-                    <td><?php echo $user['Photo']?></td>
+                    <td><img src="<?php echo $user['Photo']?>" alt="<?php echo $user['UserID']."-".$user['FullName']?>" height="50" class="rounded-circle"></td>
                     <td><?php echo $user['UserID']?></td>
                     <td><?php echo $user['RoleID']?></td>
                     <td><?php echo $user['Role']?></td>

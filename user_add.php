@@ -14,8 +14,16 @@ $roles = mysqli_query($conn, $sql_roles);
 // define variables and set to empty values
 $nameErr = $emailErr = $genderIDErr = $usernameErr = $passwordErr = "";
 $name = $email = $genderID = $dob = $street = $cityID = $stateID = $countryID = $roleID = $username = $password = "";
+$uploadErr = [];
+$uploads_dir = './assets/images/';
+
+
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+  $to = $uploads_dir.basename($_FILES['imageUrl']['name']);
+  $from = $_FILES['imageUrl']['tmp_name'];
+  $size = $_FILES['imageUrl']['size'];
+  $filetype = strtolower(pathinfo($to,PATHINFO_EXTENSION));
   if (empty($_POST["fullName"])) {
     $nameErr = "Name is required";
   } else {
@@ -89,16 +97,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   } else {
     $roleID = test_input($_POST["roleID"]);
   }
+  // Check if file already exists
+  if (file_exists($to)) {
+  array_push($uploadErr,"Sorry, file already exists.");
+  }
+  
+  // limit file size 2MB
+  if($size > 2097152) {
+  array_push($uploadErr,"file size must be under 2MB");
+  }
+  
+  // limit file type    
+  if(!($filetype == 'png' || $filetype == 'jpg' || $filetype == 'jpeg' || $filetype == 'bmp' || $filetype == 'svg' || $filetype == 'webp' || $filetype == 'gif')) {
+  array_push($uploadErr,"Sorry, only JPG, JPEG, PNG, BMP, WEBP, SVG & GIF files are allowed.");
+  }
 
-  if (empty($nameErr) && empty($emailErr) && empty($genderIDErr)) {
-    $sql_insert_user = "INSERT INTO `users` (`FullName`, `Email`, `BirthDate`, `GenderID`, `Photo`, `Street`, `CityID`, `StateID`, `CountryID`, `RoleID`) VALUES ('$name', '$email', '$dob', '$genderID', NULL, '$street', '$cityID', '$stateID', '$countryID', '$roleID')";
-
-    if (mysqli_query($conn, $sql_insert_user)) {
-      $userid = mysqli_insert_id($conn);
-      $sql_insert_login = "INSERT INTO `logins` (`Username`, `Password`, `UserID`, `IsActive`) VALUES ('$username', '$password', '$userid', '1')";
-      if (mysqli_query($conn, $sql_insert_login)) {
-        header("Location: users.php");
-        exit();
+  if (empty($nameErr) && empty($emailErr) && empty($genderIDErr) && empty($uploadErr)) {
+    if(move_uploaded_file($from,$to)) {
+      echo("file uploaded successfully");
+      $sql_insert_user = "INSERT INTO `users` (`FullName`, `Email`, `BirthDate`, `GenderID`, `Photo`, `Street`, `CityID`, `StateID`, `CountryID`, `RoleID`) VALUES ('$name', '$email', '$dob', '$genderID', '$to', '$street', '$cityID', '$stateID', '$countryID', '$roleID')";
+  
+      if (mysqli_query($conn, $sql_insert_user)) {
+        $userid = mysqli_insert_id($conn);
+        $sql_insert_login = "INSERT INTO `logins` (`Username`, `Password`, `UserID`, `IsActive`) VALUES ('$username', '$password', '$userid', '1')";
+        if (mysqli_query($conn, $sql_insert_login)) {
+          header("Location: users.php");
+          exit();
+        }
       }
     }
   }
@@ -132,7 +157,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ?>
             <p><span class="text-danger">* required field</span></p>
             <!-- Multi Columns Form -->
-            <form class="row g-3" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+            <form class="row g-3" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" enctype="multipart/form-data">
               <div class="col-md-12">
                 <label for="imageUrl" class="form-label">Image</label>
                 <input class="form-control" type="file" id="imageUrl" name="imageUrl">

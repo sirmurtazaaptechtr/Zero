@@ -5,7 +5,8 @@
      JOIN `genders` AS g ON u.GenderID = g.GenderID
      JOIN `cities` AS ct ON u.CityID = ct.CityID
      JOIN `states` AS s ON u.StateID = s.StateID
-     JOIN `countries` AS co ON u.CountryID = co.CountryID";
+     JOIN `countries` AS co ON u.CountryID = co.CountryID
+     ORDER BY u.UserID DESC";
     $users = mysqli_query($conn,$sql);
 ?>
 <main id="main" class="main">
@@ -37,20 +38,21 @@
                 <th scope="col">#</th>
                 <th scope="col">Photo</th>
                 <th scope="col">User ID</th>
-                <th scope="col">Role ID</th>
+                <!-- <th scope="col">Role ID</th> -->
                 <th scope="col">Role</th>
                 <th scope="col">Full Name</th>
                 <th scope="col">Email</th>
                 <th scope="col">Date of Birth</th>
-                <th scope="col">Gender ID</th>
+                <!-- <th scope="col">Gender ID</th> -->
                 <th scope="col">Gender</th>
                 <th scope="col">Street</th>
-                <th scope="col">City ID</th>
+                <!-- <th scope="col">City ID</th> -->
                 <th scope="col">City</th>
-                <th scope="col">State ID</th>
+                <!-- <th scope="col">State ID</th> -->
                 <th scope="col">State</th>
-                <th scope="col">Country ID</th>
+                <!-- <th scope="col">Country ID</th> -->
                 <th scope="col">Country</th>
+                <th scope="col">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -62,20 +64,27 @@
                     <th scope="row"><?php echo $srno;?> </th>
                     <td><img src="<?php echo $user['Photo']?>" alt="<?php echo $user['UserID']."-".$user['FullName']?>" height="50" class="rounded-circle"></td>
                     <td><?php echo $user['UserID']?></td>
-                    <td><?php echo $user['RoleID']?></td>
+                    <!-- <td><?php echo $user['RoleID']?></td> -->
                     <td><?php echo $user['Role']?></td>
                     <td><?php echo $user['FullName']?></td>
                     <td><?php echo $user['Email']?></td>
                     <td><?php echo $user['BirthDate']?></td>
-                    <td><?php echo $user['GenderID']?></td>
+                    <!-- <td><?php echo $user['GenderID']?></td> -->
                     <td><?php echo $user['Gender']?></td>
                     <td><?php echo $user['Street']?></td>
-                    <td><?php echo $user['CityID']?></td>
+                    <!-- <td><?php echo $user['CityID']?></td> -->
                     <td><?php echo $user['City']?></td>
-                    <td><?php echo $user['StateID']?></td>
+                    <!-- <td><?php echo $user['StateID']?></td> -->
                     <td><?php echo $user['State']?></td>
-                    <td><?php echo $user['CountryID']?></td>
+                    <!-- <td><?php echo $user['CountryID']?></td> -->
                     <td><?php echo $user['Country']?></td>
+                    <td>
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                      <a href="#" type="button" class="btn btn-info">View</a>
+                      <a href="user_edit.php?id=<?php echo $user['UserID']?>" type="button" class="btn btn-success">Edit</a>
+                      <a href="#" type="button" class="btn btn-danger">Delete</a>
+                    </div>
+                    </td>
                 </tr>
                 <?php
                 $srno++;
